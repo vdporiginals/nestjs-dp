@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
-class Post {
+class Posts {
   @PrimaryGeneratedColumn()
   public id: number;
 
@@ -12,4 +12,4 @@ class Post {
   public content: string;
 }
 
-export default Post;
+export default Posts;

@@ -1,11 +1,13 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-import { HttpException, HttpStatus } from '@nestjs/common';
-import { UsersService } from '../user/users.service';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { TokenPayload } from './auth.interface';
-import { RegisterDto } from './dto/register.dto';
+import RegisterDto from './dto/register.dto';
+import { PostgresErrorCode } from 'src/database/postgres-error-codes.enum';
+import { UsersService } from 'src/user/users.service';
+@Injectable()
 export class AuthService {
   constructor(
     private readonly usersService: UsersService,
@@ -16,23 +18,21 @@ export class AuthService {
   public async register(registrationData: RegisterDto) {
     const hashedPassword = await bcrypt.hash(registrationData.password, 10);
     try {
-      const createdUser = await this.usersService.create({
+      const createdUser = await this.usersService.createUser({
         ...registrationData,
         password: hashedPassword,
       });
       createdUser.password = undefined;
       return createdUser;
     } catch (error) {
+      console.log(error);
+
       if (error?.code === PostgresErrorCode.UniqueViolation) {
         throw new HttpException(
           'User with that email already exists',
           HttpStatus.BAD_REQUEST,
         );
       }
-      throw new HttpException(
-        'Something went wrong',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
     }
   }
 

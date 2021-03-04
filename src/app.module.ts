@@ -5,6 +5,10 @@ import { ConfigModule } from '@nestjs/config';
 import { PostModule } from './post/posts.module';
 import { DatabaseModule } from './database/database.module';
 import * as Joi from 'joi';
+import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './user/users.module';
+import { APP_FILTER } from '@nestjs/core';
+import { ErrorsLoggerFilter } from './utils/errors-logger.filter';
 @Module({
   imports: [
     PostModule,
@@ -21,8 +25,16 @@ import * as Joi from 'joi';
       }),
     }),
     DatabaseModule,
+    AuthModule,
+    UsersModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_FILTER,
+      useClass: ErrorsLoggerFilter,
+    },
+  ],
 })
 export class AppModule {}

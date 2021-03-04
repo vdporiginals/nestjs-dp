@@ -12,13 +12,14 @@ import { JwtStrategy } from './jwt-strat/jwt.strategy';
   imports: [
     UsersModule,
     PassportModule,
+    ConfigModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
         secret: configService.get('JWT_SECRET'),
         signOptions: {
-          expiresIn: `${configService.get('JWT_EXPIRATION_TIME')}s`,
+          expiresIn: `${configService.get('JWT_EXPIRATION_TIME')}`,
         },
       }),
     }),
