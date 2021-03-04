@@ -6,11 +6,9 @@ import {
   Param,
   Patch,
   Post,
-  UseFilters,
   UseGuards,
 } from '@nestjs/common';
-import JwtAuthenticationGuard from 'src/auth/jwt-strat/jwt-auth.guard';
-import { ErrorsLoggerFilter } from 'src/utils/errors-logger.filter';
+import JwtAuthGuard from 'src/auth/jwt-strat/jwt-auth.guard';
 import FindOneParams from 'src/utils/find-one-params';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
@@ -22,32 +20,31 @@ export default class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
   @Get()
-  getAllPosts() {
+  getAllPosts(): Promise<Posts[]> {
     return this.postsService.getAllPosts();
   }
 
   @Get(':id')
-  @UseFilters(ErrorsLoggerFilter)
   getPostById(@Param() { id }: FindOneParams): Promise<Posts> {
     return this.postsService.getPostById(Number(id));
   }
 
   @Post()
-  @UseGuards(JwtAuthenticationGuard)
+  @UseGuards(JwtAuthGuard)
   async createPost(@Body() post: CreatePostDto): Promise<Posts> {
     return this.postsService.createPost(post);
   }
 
   @Patch(':id')
   async updatePost(
-    @Param('id') id: string,
+    @Param() { id }: FindOneParams,
     @Body() post: UpdatePostDto,
   ): Promise<Posts> {
     return this.postsService.updatePost(Number(id), post);
   }
 
   @Delete(':id')
-  async deletePost(@Param('id') id: string): Promise<void> {
+  async deletePost(@Param() { id }: FindOneParams): Promise<void> {
     return this.postsService.deletePost(Number(id));
   }
 }

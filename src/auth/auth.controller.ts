@@ -5,13 +5,8 @@ import {
   HttpCode,
   Post,
   UseGuards,
-  Res,
   Get,
-  UseFilters,
 } from '@nestjs/common';
-import { Response } from 'express';
-import User from 'src/user/users.entity';
-import { ErrorsLoggerFilter } from 'src/utils/errors-logger.filter';
 import { RequestWithUser } from './auth.interface';
 import { AuthService } from './auth.service';
 import RegisterDto from './dto/register.dto';
@@ -23,39 +18,30 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('register')
-  @UseFilters(ErrorsLoggerFilter)
-  async register(@Body() registrationData: RegisterDto): Promise<User> {
-    return await this.authService.register(registrationData);
+  async register(@Body() registrationData: RegisterDto) {
+    return this.authService.register(registrationData);
   }
 
   @HttpCode(200)
   @UseGuards(LocalAuthGuard)
   @Post('log-in')
-  async logIn(
-    @Req() request: RequestWithUser,
-    @Res() response: Response,
-  ): Promise<Response<User, Record<string, any>>> {
+  async logIn(@Req() request: RequestWithUser) {
     const { user } = request;
     const cookie = this.authService.getCookieWithJwtToken(user.id);
-    response.setHeader('Set-Cookie', cookie);
-    user.password = undefined;
-    return response.send(user);
+    request.res.setHeader('Set-Cookie', cookie);
+    return user;
   }
 
   @UseGuards(JwtAuthGuard)
   @Post('log-out')
-  async logOut(
-    @Res() response: Response,
-  ): Promise<Response<unknown, Record<string, any>>> {
-    response.setHeader('Set-Cookie', this.authService.getCookieForLogOut());
-    return response.sendStatus(200);
+  @HttpCode(200)
+  async logOut(@Req() request: RequestWithUser) {
+    request.res.setHeader('Set-Cookie', this.authService.getCookieForLogOut());
   }
 
   @UseGuards(JwtAuthGuard)
   @Get()
-  authenticate(@Req() request: RequestWithUser): User {
-    const user = request.user;
-    user.password = undefined;
-    return user;
+  authenticate(@Req() request: RequestWithUser) {
+    return request.user;
   }
 }
