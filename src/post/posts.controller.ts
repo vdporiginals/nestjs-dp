@@ -6,7 +6,9 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
+import JwtAuthenticationGuard from 'src/auth/jwt-strat/jwt-auth.guard';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import PostsService from './posts.service';
@@ -26,6 +28,7 @@ export default class PostsController {
   }
 
   @Post()
+  @UseGuards(JwtAuthenticationGuard)
   async createPost(@Body() post: CreatePostDto) {
     return this.postsService.createPost(post);
   }
@@ -36,7 +39,7 @@ export default class PostsController {
   }
 
   @Delete(':id')
-  async deletePost(@Param('id') id: string) {
+  async deletePost(@Param('id') id: string): Promise<void> {
     return this.postsService.deletePost(Number(id));
   }
 }

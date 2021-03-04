@@ -12,11 +12,11 @@ export default class PostsService {
     private postsRepository: Repository<Post>,
   ) {}
 
-  getAllPosts() {
-    return this.postsRepository.find();
+  async getAllPosts(): Promise<Post[]> {
+    return await this.postsRepository.find();
   }
 
-  async getPostById(id: number) {
+  async getPostById(id: number): Promise<Post> {
     const post = await this.postsRepository.findOne(id);
     if (post) {
       return post;
@@ -24,13 +24,13 @@ export default class PostsService {
     throw new HttpException('Post not found', HttpStatus.NOT_FOUND);
   }
 
-  async createPost(post: CreatePostDto) {
+  async createPost(post: CreatePostDto): Promise<Post> {
     const newPost = await this.postsRepository.create(post);
     await this.postsRepository.save(newPost);
     return newPost;
   }
 
-  async updatePost(id: number, post: UpdatePostDto) {
+  async updatePost(id: number, post: UpdatePostDto): Promise<Post> {
     await this.postsRepository.update(id, post);
     const updatedPost = await this.postsRepository.findOne(id);
     if (updatedPost) {
@@ -39,7 +39,7 @@ export default class PostsService {
     throw new HttpException('Post not found', HttpStatus.NOT_FOUND);
   }
 
-  async deletePost(id: number) {
+  async deletePost(id: number): Promise<void> {
     const deleteResponse = await this.postsRepository.delete(id);
     if (!deleteResponse.affected) {
       throw new HttpException('Post not found', HttpStatus.NOT_FOUND);
