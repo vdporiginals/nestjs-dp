@@ -1,8 +1,16 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { Transform } from 'class-transformer';
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import User from '../user/users.entity';
+import Category from '../categories/category.entity';
 
 @Entity()
-class Posts {
+class Post {
   @PrimaryGeneratedColumn()
   public id: number;
 
@@ -14,6 +22,13 @@ class Posts {
 
   @Column({ nullable: true })
   public category?: string;
+
+  @ManyToOne(() => User, (author: User) => author.posts)
+  public author: User;
+
+  @ManyToMany(() => Category, (category: Category) => category.posts)
+  @JoinTable()
+  public categories: Category[];
 }
 
-export default Posts;
+export default Post;

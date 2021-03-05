@@ -11,7 +11,7 @@ export class UsersService {
     private usersRepository: Repository<User>,
   ) {}
 
-  async getByEmail(email: string): Promise<User> {
+  async getByEmail(email: string) {
     const user = await this.usersRepository.findOne({ email });
     if (user) {
       return user;
@@ -22,7 +22,7 @@ export class UsersService {
     );
   }
 
-  async getById(id: number): Promise<User> {
+  async getById(id: number) {
     const user = await this.usersRepository.findOne({ id });
     if (user) {
       return user;
@@ -33,7 +33,7 @@ export class UsersService {
     );
   }
 
-  async createUser(userData: CreateUserDto): Promise<User> {
+  async createUser(userData: CreateUserDto) {
     const newUser = await this.usersRepository.create(userData);
     await this.usersRepository.save(newUser);
     return newUser;
