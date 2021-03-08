@@ -9,6 +9,7 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './user/users.module';
 import { APP_FILTER } from '@nestjs/core';
 import { ErrorsLoggerFilter } from './utils/errors-logger.filter';
+import { CategoryModule } from './categories/category.module';
 @Module({
   imports: [
     PostModule,
@@ -27,6 +28,7 @@ import { ErrorsLoggerFilter } from './utils/errors-logger.filter';
     DatabaseModule,
     AuthModule,
     UsersModule,
+    CategoryModule,
   ],
   controllers: [AppController],
   providers: [
