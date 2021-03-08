@@ -5,8 +5,8 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { TokenPayload } from './auth.interface';
 import RegisterDto from './dto/register.dto';
-import { PostgresErrorCode } from 'src/database/postgres-error-codes.enum';
-import { UsersService } from 'src/user/users.service';
+import { PostgresErrorCode } from '../database/postgres-error-codes.enum';
+import { UsersService } from '../user/users.service';
 @Injectable()
 export class AuthService {
   constructor(
