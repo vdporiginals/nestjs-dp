@@ -33,7 +33,7 @@ class User {
   public address: Address;
 
   @OneToMany(() => Posts, (post: Posts) => post.author)
-  public posts: Posts[];
+  public posts?: Posts[];
 }
 
 export default User;
